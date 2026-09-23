@@ -2,3 +2,20 @@ Name : deploy production grade infrastructure with VPC ,public and private subne
 Overview :  Create a VPC as a production environment. To improve resiliency, deployed the servers in two Availability Zones, by using an Auto 
 Scaling group and an Application Load Balancer. For additional security, deployed the servers in private subnets. The servers receive requests through the load balancer. 
 The servers can connect to the internet by using a NAT gateway. To improve resiliency,  deploy the NAT gateway in both Availability Zones.
+steps:
+1. created infra like 1 VPC 2 private and 2 public subnets in different AZs. 2 seperate route tables for public and private subnets. NAT gateway resides in public subnet. 
+through NAT application in private subnet can reach out to ineternet.
+2. Created autoscaling group using suitable ec2 templates. I put desired capacity 2 , min 1 and max 3 EC2 instances.
+3. as autoscaling group created 2 EC2 instance provisioned in private subnet.
+4. created Application loadbalancer. also target group added both public subnets in configurations. [port:80, so added inboud rule for port80 in security group]
+5. to access EC2 instance which is in private subnet, I created bastian (jump) host. login jump host using public ip from my powershel(AWS CLI is already installed in my 
+powershell local terminal)
+used scp to copy key pair. used command :
+scp -i C:\Users\User\Downloads\key_mukesh.pem C:\Users\User\Downloads\key_mukesh.pem ec2-user@13.233.27.34:/home/ec2-user/
+To access EC2 instance in private subnet through bastian host used command :
+ ssh -i key_mukesh ec2-user@13.233.27.34
+I installed simple web application.[copied HTML file from w3schools] run this application on 
+python using command :
+           python3 -m http.server 8000    # applcation running on port 8000
+6. Once installed application everything is done. I used load balancer DNS name.
+and i was able to access my application.
